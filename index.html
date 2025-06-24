@@ -1,185 +1,123 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Wishes Generator</title>
+  <meta charset="UTF-8">
+  <title>🎉 Special Wishes</title>
   <style>
-    body, html {
-      margin: 0; padding: 0;
-      width: 100%; height: 100%;
-      overflow: hidden;
+    body {
+      margin: 0;
+      padding: 0;
       font-family: 'Segoe UI', sans-serif;
-    }
-    #bg {
-      position: fixed; top: 0; left: 0;
-      width: 100%; height: 100%;
+      background-image: url('https://images.unsplash.com/photo-1603575448378-2df6e384f20f?auto=format&fit=crop&w=1400&q=80');
       background-size: cover;
       background-position: center;
-      filter: brightness(0.7);
-      z-index: -2;
-    }
-    .overlay {
-      position: fixed; top: 0; left: 0;
-      width: 100%; height: 100%;
-      z-index: -1;
-    }
-    .container {
-      position: relative;
-      z-index: 1;
-      max-width: 400px;
-      margin: auto;
-      padding: 40px;
-      background: rgba(255,255,255,0.9);
-      border-radius: 20px;
+      color: white;
       text-align: center;
-      box-shadow: 0 8px 20px rgba(0,0,0,0.15);
-      top: 50%;
-      transform: translateY(-50%);
+      overflow-x: hidden;
     }
-    input, select, textarea, button {
-      width: 100%; margin: 10px 0;
-      padding: 12px;
-      border: 1px solid #ccc;
+
+    .container {
+      margin-top: 60px;
+      background: rgba(0, 0, 0, 0.6);
+      padding: 30px;
+      border-radius: 12px;
+      width: 80%;
+      max-width: 600px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    input, textarea, select, button {
+      margin: 10px;
+      padding: 10px;
+      width: 90%;
       border-radius: 8px;
+      border: none;
       font-size: 16px;
     }
+
     button {
-      background-color: #ff4081;
+      background: #ff69b4;
       color: white;
       cursor: pointer;
-      font-weight: bold;
     }
-    button:hover { background-color: #e73370; }
-    .wish-box {
-      margin-top: 20px;
-      font-size: 20px;
-      color: #444;
+
+    .balloon {
+      position: absolute;
+      width: 40px;
+      height: 60px;
+      background: red;
+      border-radius: 50% 50% 50% 50% / 60% 60% 40% 40%;
+      animation: floatUp 5s linear infinite;
+      opacity: 0.8;
     }
-    #shareBtn {
-      margin-top: 20px;
+
+    @keyframes floatUp {
+      0% {
+        transform: translateY(100vh);
+        opacity: 1;
+      }
+      100% {
+        transform: translateY(-200px);
+        opacity: 0;
+      }
     }
   </style>
 </head>
 <body>
 
-<div id="bg"></div>
-<canvas class="overlay"></canvas>
+  <audio autoplay loop>
+    <source src="https://www2.cs.uic.edu/~i101/SoundFiles/HappyBirthday.mp3" type="audio/mpeg">
+  </audio>
 
-<div class="container">
-  <h1>🎉 Send Best Wishes</h1>
-  <input id="nameInput" placeholder="Enter name"/>
-  <select id="eventType">
-    <option value="birthday">🎂 Birthday</option>
-    <option value="anniversary">💍 Anniversary</option>
-  </select>
-  <textarea id="msgInput" rows="3" placeholder="Your message"></textarea>
-  <input id="bgInput" placeholder="Background image URL (optional)"/>
-  <button onclick="generateWish()">Generate Wish</button>
-  <div class="wish-box" id="wishBox"></div>
-  <button id="shareBtn" onclick="shareLink()" style="display:none;">📤 Share This Wish</button>
-</div>
+  <div class="container">
+    <h1>🎂 Create Your Special Wish</h1>
+    <input type="text" id="name" placeholder="Name of person">
+    <select id="event">
+      <option>Birthday</option>
+      <option>Anniversary</option>
+    </select>
+    <textarea id="message" rows="3" placeholder="Your custom message"></textarea>
+    <input type="number" id="age" placeholder="Age (number of balloons)">
+    <button onclick="showWish()">🎉 Show Wish</button>
+  </div>
 
-<audio id="music" loop src="https://www2.cs.uic.edu/~i101/SoundFiles/BirthdaySong.mp3"></audio>
+  <div class="container" id="result" style="display:none;">
+    <h2 id="outputName"></h2>
+    <p id="outputMsg"></p>
+  </div>
 
-<script>
-  // Confetti & balloons via canvas
-  const canvas = document.querySelector('canvas');
-  const ctx = canvas.getContext('2d');
-  let particles = [];
-  function resize() {
-    canvas.width = window.innerWidth;
-    canvas.height = window.innerHeight;
-  }
-  window.addEventListener('resize', resize);
-  resize();
+  <script>
+    function showWish() {
+      const name = document.getElementById("name").value;
+      const event = document.getElementById("event").value;
+      const message = document.getElementById("message").value;
+      const age = parseInt(document.getElementById("age").value) || 0;
 
-  function createParticles() {
-    for(let i=0;i<150;i++){
-      particles.push({
-        x: Math.random()*canvas.width,
-        y: Math.random()*canvas.height - canvas.height,
-        size: 8 + Math.random()*8,
-        speed: 1 + Math.random()*3,
-        angle: Math.random()*Math.PI*2,
-        color: ['#FFC107','#FF4081','#8BC34A','#03A9F4'][Math.floor(Math.random()*4)],
-        type: Math.random()<0.5?'circle':'balloon'
-      });
-    }
-  }
-  function draw() {
-    ctx.clearRect(0,0,canvas.width,canvas.height);
-    particles.forEach(p=>{
-      p.y += p.speed;
-      p.x += Math.sin(p.angle)*2;
-      p.angle += 0.02;
-      if(p.y > canvas.height) p.y = -p.size;
-      if(p.x > canvas.width) p.x = p.x % canvas.width;
-      ctx.fillStyle = p.color;
-      if(p.type==='circle'){
-        ctx.beginPath();
-        ctx.arc(p.x,p.y,p.size/2,0,Math.PI*2);
-        ctx.fill();
-      } else {
-        // balloon
-        ctx.beginPath();
-        ctx.ellipse(p.x,p.y,p.size*0.6,p.size,0,0,Math.PI*2);
-        ctx.fill();
-        ctx.beginPath();
-        ctx.moveTo(p.x,p.y+p.size);
-        ctx.lineTo(p.x,p.y+p.size+10);
-        ctx.strokeStyle=p.color; ctx.stroke();
+      document.getElementById("outputName").innerText = `🎉 ${event} Wishes for ${name}!`;
+      document.getElementById("outputMsg").innerText = message;
+      document.getElementById("result").style.display = "block";
+
+      // Remove old balloons
+      document.querySelectorAll(".balloon").forEach(b => b.remove());
+
+      // Create balloons based on age
+      for (let i = 0; i < age; i++) {
+        const balloon = document.createElement("div");
+        balloon.className = "balloon";
+        balloon.style.left = Math.random() * 100 + "vw";
+        balloon.style.background = getRandomColor();
+        balloon.style.animationDuration = (Math.random() * 3 + 3) + "s";
+        document.body.appendChild(balloon);
       }
-    });
-    requestAnimationFrame(draw);
-  }
-  createParticles();
-  draw();
-  
-  // Wish generator
-  function generateWish(){
-    const name = document.getElementById('nameInput').value.trim();
-    const event = document.getElementById('eventType').value;
-    const msg = document.getElementById('msgInput').value.trim();
-    const bg = document.getElementById('bgInput').value.trim();
-    if(!name||!msg){
-      alert('Please enter name & message');
-      return;
     }
-    document.getElementById('bg').style.backgroundImage = bg?`url('${bg}')`:`url('https://i.imgur.com/9z3sJYk.jpg')`;
-    const music = document.getElementById('music');
-    music.currentTime=0; music.play();
-    let line = event==='birthday'
-      ? `🎂 Happy Birthday, <strong>${name}</strong>!`
-      : `💖 Happy Anniversary, <strong>${name}</strong>!`;
-    document.getElementById('wishBox').innerHTML = `${line}<br>${msg}`;
-    document.getElementById('shareBtn').style.display = 'block';
-  }
 
-  // Share link pre-filled
-  function shareLink(){
-    const name=encodeURIComponent(document.getElementById('nameInput').value);
-    const event=encodeURIComponent(document.getElementById('eventType').value);
-    const msg=encodeURIComponent(document.getElementById('msgInput').value);
-    const bg=encodeURIComponent(document.getElementById('bgInput').value);
-    const url = `${location.origin}${location.pathname}?name=${name}&event=${event}&msg=${msg}&bg=${bg}`;
-    navigator.clipboard.writeText(url);
-    alert('Link copied! Share this with your friend.');
-  }
-
-  // Pre-fill from URL
-  function prefill(){
-    const p=new URLSearchParams(location.search);
-    if(p.has('name')) document.getElementById('nameInput').value = p.get('name');
-    if(p.has('event')) document.getElementById('eventType').value = p.get('event');
-    if(p.has('msg')) document.getElementById('msgInput').value = p.get('msg');
-    if(p.has('bg')) document.getElementById('bgInput').value = p.get('bg');
-    if(p.has('name') && p.has('msg')){
-      generateWish();
+    function getRandomColor() {
+      const colors = ["#ff4b5c", "#f9a825", "#42a5f5", "#66bb6a", "#ab47bc", "#ec407a"];
+      return colors[Math.floor(Math.random() * colors.length)];
     }
-  }
-  prefill();
-</script>
+  </script>
 
 </body>
 </html>
