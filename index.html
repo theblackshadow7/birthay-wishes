@@ -3,121 +3,42 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>🎉 Special Wishes</title>
+  <title>🎉 Choose Event</title>
   <style>
     body {
       margin: 0;
       padding: 0;
-      font-family: 'Segoe UI', sans-serif;
-      background-image: url('https://images.unsplash.com/photo-1603575448378-2df6e384f20f?auto=format&fit=crop&w=1400&q=80');
-      background-size: cover;
-      background-position: center;
-      color: white;
-      text-align: center;
-      overflow-x: hidden;
+      height: 100vh;
+      background: linear-gradient(to right, #ffecd2 0%, #fcb69f 100%);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-family: sans-serif;
     }
-
     .container {
-      margin-top: 60px;
-      background: rgba(0, 0, 0, 0.6);
-      padding: 30px;
-      border-radius: 12px;
-      width: 80%;
-      max-width: 600px;
-      margin-left: auto;
-      margin-right: auto;
+      text-align: center;
     }
-
-    input, textarea, select, button {
-      margin: 10px;
-      padding: 10px;
-      width: 90%;
-      border-radius: 8px;
-      border: none;
-      font-size: 16px;
+    h1 {
+      font-size: 2.5rem;
+      margin-bottom: 30px;
     }
-
     button {
-      background: #ff69b4;
-      color: white;
+      padding: 15px 30px;
+      margin: 10px;
+      font-size: 1.2rem;
+      border: none;
+      border-radius: 8px;
       cursor: pointer;
     }
-
-    .balloon {
-      position: absolute;
-      width: 40px;
-      height: 60px;
-      background: red;
-      border-radius: 50% 50% 50% 50% / 60% 60% 40% 40%;
-      animation: floatUp 5s linear infinite;
-      opacity: 0.8;
-    }
-
-    @keyframes floatUp {
-      0% {
-        transform: translateY(100vh);
-        opacity: 1;
-      }
-      100% {
-        transform: translateY(-200px);
-        opacity: 0;
-      }
-    }
+    .birthday { background-color: #ff69b4; color: white; }
+    .anniversary { background-color: #9370DB; color: white; }
   </style>
 </head>
 <body>
-
-  <audio autoplay loop>
-    <source src="https://www2.cs.uic.edu/~i101/SoundFiles/HappyBirthday.mp3" type="audio/mpeg">
-  </audio>
-
   <div class="container">
-    <h1>🎂 Create Your Special Wish</h1>
-    <input type="text" id="name" placeholder="Name of person">
-    <select id="event">
-      <option>Birthday</option>
-      <option>Anniversary</option>
-    </select>
-    <textarea id="message" rows="3" placeholder="Your custom message"></textarea>
-    <input type="number" id="age" placeholder="Age (number of balloons)">
-    <button onclick="showWish()">🎉 Show Wish</button>
+    <h1>🎉 What are you celebrating?</h1>
+    <button class="birthday" onclick="location.href='birthday.html'">🎂 Birthday</button>
+    <button class="anniversary" onclick="location.href='anniversary.html'">💍 Anniversary</button>
   </div>
-
-  <div class="container" id="result" style="display:none;">
-    <h2 id="outputName"></h2>
-    <p id="outputMsg"></p>
-  </div>
-
-  <script>
-    function showWish() {
-      const name = document.getElementById("name").value;
-      const event = document.getElementById("event").value;
-      const message = document.getElementById("message").value;
-      const age = parseInt(document.getElementById("age").value) || 0;
-
-      document.getElementById("outputName").innerText = `🎉 ${event} Wishes for ${name}!`;
-      document.getElementById("outputMsg").innerText = message;
-      document.getElementById("result").style.display = "block";
-
-      // Remove old balloons
-      document.querySelectorAll(".balloon").forEach(b => b.remove());
-
-      // Create balloons based on age
-      for (let i = 0; i < age; i++) {
-        const balloon = document.createElement("div");
-        balloon.className = "balloon";
-        balloon.style.left = Math.random() * 100 + "vw";
-        balloon.style.background = getRandomColor();
-        balloon.style.animationDuration = (Math.random() * 3 + 3) + "s";
-        document.body.appendChild(balloon);
-      }
-    }
-
-    function getRandomColor() {
-      const colors = ["#ff4b5c", "#f9a825", "#42a5f5", "#66bb6a", "#ab47bc", "#ec407a"];
-      return colors[Math.floor(Math.random() * colors.length)];
-    }
-  </script>
-
 </body>
 </html>
