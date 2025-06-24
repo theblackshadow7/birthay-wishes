@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>🎉 Choose Event</title>
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      height: 100vh;
+      background: linear-gradient(to right, #ffecd2 0%, #fcb69f 100%);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-family: sans-serif;
+    }
+    .container {
+      text-align: center;
+    }
+    h1 {
+      font-size: 2.5rem;
+      margin-bottom: 30px;
+    }
+    button {
+      padding: 15px 30px;
+      margin: 10px;
+      font-size: 1.2rem;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+    }
+    .birthday { background-color: #ff69b4; color: white; }
+    .anniversary { background-color: #9370DB; color: white; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>🎉 What are you celebrating?</h1>
+    <button class="birthday" onclick="location.href='birthday.html'">🎂 Birthday</button>
+    <button class="anniversary" onclick="location.href='anniversary.html'">💍 Anniversary</button>
+  </div>
+</body>
+</html>
